@@ -1,0 +1,26 @@
+name: Compile and Build
+
+on:
+  push:
+    branches:
+      - feature/ci-pipeline-task3
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build the project
+      run: |
+        echo "Building the project..."
+        # Replace this with your actual build command
+        echo "Build done!"
+
+    - name: Build Docker Image
+      run: |
+        echo "Building Docker image..."
+        # Replace this with your actual Docker build and push commands
+        echo "Docker image built!"
