@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                script {
+                    // Checkout the code from the public repository
+                    checkout scmGit(
+                        branches: [[name: 'main']],
+                        extensions: [],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/KARISHMASATISHPATIL/hello-world.git'
+                        ]]
+                    )
+                }
+            }
+        }
+
+        stage('Compile Java Program') {
+            steps {
+                script {
+                    // Compile the HelloWorld.java file
+                    sh 'javac HelloWorld.java'
+                }
+            }
+        }
+
+        stage('Run Java Program') {
+            steps {
+                script {
+                    // Run the compiled Java program
+                    sh 'java HelloWorld'
+                }
+            }
+        }
+    }
+}
