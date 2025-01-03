@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                url: 'https://github.com/KARISHMASATISHPATIL/hello-world.git',
+                branch: 'main'
+                      
+                    
+                }
+            }
+        }
+
+        stage('Compile Java Program') {
+            steps {
+                script {
+                    // Compile the HelloWorld.java file
+                    sh 'java HelloWorld.java'
+                }
+            }
+        }
+
+        stage('Run Java Program') {
+            steps {
+                script {
+                    // Run the compiled Java program
+                    sh 'java HelloWorld'
+                }
+            }
+        }
+    }
+}
