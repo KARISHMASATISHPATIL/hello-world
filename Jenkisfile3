@@ -43,26 +43,5 @@ pipeline {
                 }
             }
         }
-
-        stage('Push Docker Image to AWS ECR') {
-            steps {
-                script {
-                    // Define ECR URI
-                    def ecrUri = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}"
-
-                    // Authenticate Docker with ECR
-                    sh """
-                    aws ecr get-login-password --region $AWS_REGION | \
-                    docker login --username AWS --password-stdin $ecrUri
-                    """
-
-                    // Tag Docker image for ECR
-                    sh "docker tag $DOCKER_IMAGE_NAME:latest $ecrUri:latest"
-
-                    // Push Docker image to ECR
-                    sh "docker push $ecrUri:latest"
-                }
-            }
-        }
     }
 }
