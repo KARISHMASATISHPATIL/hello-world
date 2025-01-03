@@ -4,8 +4,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Jenkins credentials for AWS
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_REGION = 'us-east-1' 
-        ECR_REPO_NAME = 'letsgrowmore' 
+        AWS_REGION = 'us-east-1'  
         DOCKER_IMAGE_NAME = 'hello-world-java-app'
         ACCOUNT_ID = '664418964564' 
     }
