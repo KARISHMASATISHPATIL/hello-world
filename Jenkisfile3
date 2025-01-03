@@ -1,18 +1,32 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Jenkins credentials for AWS
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_REGION = 'us-east-1' 
+        ECR_REPO_NAME = 'letsgrowmore' 
+        DOCKER_IMAGE_NAME = 'hello-world-java-app'
+        ACCOUNT_ID = '664418964564' 
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
-                url: 'https://github.com/KARISHMASATISHPATIL/hello-world.git',
-                branch: 'main'
-                      
-                    
+                script {
+                    // Checkout code from your repository
+                    checkout scmGit(
+                        branches: [[name: 'main']],
+                        extensions: [],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/KARISHMASATISHPATIL/hello-world.git'
+                        ]]
+                    )
                 }
             }
         }
 
-        stage('Compile Java Program') {
+        stage('Build Java Class') {
             steps {
                 script {
                     // Compile the HelloWorld.java file
@@ -21,11 +35,32 @@ pipeline {
             }
         }
 
-        stage('Run Java Program') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    // Run the compiled Java program
-                    sh 'java HelloWorld'
+                    // Build the Docker image
+                    sh 'docker build -t $DOCKER_IMAGE_NAME .'
+                }
+            }
+        }
+
+        stage('Push Docker Image to AWS ECR') {
+            steps {
+                script {
+                    // Define ECR URI
+                    def ecrUri = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}"
+
+                    // Authenticate Docker with ECR
+                    sh """
+                    aws ecr get-login-password --region $AWS_REGION | \
+                    docker login --username AWS --password-stdin $ecrUri
+                    """
+
+                    // Tag Docker image for ECR
+                    sh "docker tag $DOCKER_IMAGE_NAME:latest $ecrUri:latest"
+
+                    // Push Docker image to ECR
+                    sh "docker push $ecrUri:latest"
                 }
             }
         }
